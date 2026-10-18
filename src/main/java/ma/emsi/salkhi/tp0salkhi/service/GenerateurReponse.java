@@ -1,33 +1,30 @@
 package ma.emsi.salkhi.tp0salkhi.service;
 
 import jakarta.enterprise.context.Dependent;
-
 import java.io.Serializable;
 import java.util.Locale;
 
-/**
- * Classe de service pour la génération de réponse.
- * Un modificateur de question prend en entrée une question et retourne
- * la question modifiée.
- */
-@Dependent // Portée CDI pour rendre la classe injectable par CDI dans les autres classes.
-// Portée Dependent : l'instance sera supprimée quand la classe qui l'a injectée sera supprimée.
-public class GenerateurReponse implements Serializable { // Car CDI peut mettre l'instance en mémoire secondaire.
-    /**
-     * Modificateur de question / Générateur de réponse.
-     * @param question La question à modifier.
-     * @param roleSysteme Le rôle système à utiliser pour la modification de la question.
-     * @return La question modifiée : le rôle système en majuscule au début de la question, s'il n'est pas null,
-     * suivi d'un saut de ligne,
-     * puis la question en minuscule, le tout entouré de "||".
-     */
+@Dependent
+public class GenerateurReponse implements Serializable {
+
     public String genererReponse(String question, String roleSysteme) {
-        String resultat = "||";
-        if (roleSysteme != null) {
-            // Ajouter le rôle système en majuscule au début du résultat, suivi d'un saut de ligne.
-            resultat += roleSysteme.toUpperCase(Locale.FRENCH) + "\n";
+        if (question == null) {
+            question = "";
         }
-        resultat += question.toLowerCase(Locale.FRENCH) + "||";
-        return resultat;
+
+        // Traitement personnel et original pour le bonus
+        int nbrCaracteres = question.length();
+        String roleFormate = (roleSysteme != null) ? roleSysteme.toUpperCase(Locale.FRENCH) : "STANDARD";
+
+        // Inversion des mots de la question
+        String[] mots = question.trim().split("\\s+");
+        StringBuilder questionInverse = new StringBuilder();
+        for (int i = mots.length - 1; i >= 0; i--) {
+            questionInverse.append(mots[i]).append(" ");
+        }
+
+        return ">>> [MODE " + roleFormate + "] <<<" + "\n" +
+                "Analyse cryptée : " + questionInverse.toString().trim() + "\n" +
+                "({ Caractères traités : " + nbrCaracteres + " })";
     }
 }
